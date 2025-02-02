@@ -2,13 +2,11 @@
 
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskStatusesController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::apiResource("tasks", TaskController::class);
-
-Route::apiResource('task-statuses', TaskStatusesController::class);
+Route::prefix("v1")->group(function () {
+    Route::apiResource("tasks", TaskController::class);
+    Route::apiResource('task-statuses', TaskStatusesController::class);
+    Route::apiResource('users', UserController::class);
+});

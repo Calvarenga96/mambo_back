@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
+use Exception;
 
 class TaskController extends Controller
 {
@@ -12,7 +13,12 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return response()->json(Task::all(), 200);
+        try {
+            $tasks = Task::all()->makeHidden(["created_at", "updated_at"]);
+            return response()->json($tasks, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al obtener las tareas.'], 500);
+        }
     }
 
     /**
@@ -20,8 +26,12 @@ class TaskController extends Controller
      */
     public function store(TaskRequest $request)
     {
-        $task = Task::create($request->validated());
-        return response()->json($task, 201);
+        try {
+            $task = Task::create($request->validated());
+            return response()->json($task, 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al crear la tarea.'], 500);
+        }
     }
 
     /**
@@ -29,7 +39,11 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return response()->json($task, 200);
+        try {
+            return response()->json($task, 200)->makeHidden(["created_at", "updated_at"]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al obtener la tarea.'], 500);
+        }
     }
 
     /**
@@ -37,8 +51,12 @@ class TaskController extends Controller
      */
     public function update(TaskRequest $request, Task $task)
     {
-        $task->update($request->validated());
-        return response()->json($task, 200);
+        try {
+            $task->update($request->validated());
+            return response()->json($task, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al actualizar la tarea.'], 500);
+        }
     }
 
     /**
@@ -46,7 +64,11 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->delete();
-        return response()->json(null, 204);
+        try {
+            $task->delete();
+            return response()->json(null, 204);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al eliminar la tarea.'], 500);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskStatusRequest;
 use App\Models\TaskStatus;
+use Exception;
 
 class TaskStatusesController extends Controller
 {
@@ -12,7 +13,12 @@ class TaskStatusesController extends Controller
      */
     public function index()
     {
-        return response()->json(TaskStatus::all(), 200);
+        try {
+            $taskStatuses = TaskStatus::all()->makeHidden(["created_at", "updated_at"]);
+            return response()->json($taskStatuses, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al obtener los estados de tarea.'], 500);
+        }
     }
 
     /**
@@ -20,8 +26,12 @@ class TaskStatusesController extends Controller
      */
     public function store(TaskStatusRequest $request)
     {
-        $taskStatus = TaskStatus::create($request->validated());
-        return response()->json($taskStatus, 201);
+        try {
+            $taskStatus = TaskStatus::create($request->validated());
+            return response()->json($taskStatus, 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al crear el estado de tarea.'], 500);
+        }
     }
 
     /**
@@ -29,7 +39,11 @@ class TaskStatusesController extends Controller
      */
     public function show(TaskStatus $taskStatus)
     {
-        return response()->json($taskStatus, 200);
+        try {
+            return response()->json($taskStatus, 200)->makeHidden(["created_at", "updated_at"]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al obtener el estado de tarea.'], 500);
+        }
     }
 
     /**
@@ -37,8 +51,12 @@ class TaskStatusesController extends Controller
      */
     public function update(TaskStatusRequest $request, TaskStatus $taskStatus)
     {
-        $taskStatus->update($request->validated());
-        return response()->json($taskStatus, 200);
+        try {
+            $taskStatus->update($request->validated());
+            return response()->json($taskStatus, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al actualizar el estado de tarea.'], 500);
+        }
     }
 
     /**
@@ -46,11 +64,16 @@ class TaskStatusesController extends Controller
      */
     public function destroy(TaskStatus $taskStatus)
     {
-        if ($taskStatus->tasks()->exists()) {
-            return response()->json(['message' => 'No se puede eliminar el estado porque hay tareas asociadas'], 400);
-        }
+        try {
+            // Validar si hay tareas asociadas al estado antes de eliminar
+            if ($taskStatus->tasks()->exists()) {
+                return response()->json(['message' => 'No se puede eliminar el estado porque hay tareas asociadas'], 400);
+            }
 
-        $taskStatus->delete();
-        return response()->json(['message' => 'Estado eliminado correctamente'], 200);
+            $taskStatus->delete();
+            return response()->json(['message' => 'Estado eliminado correctamente'], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al eliminar el estado de tarea.'], 500);
+        }
     }
 }

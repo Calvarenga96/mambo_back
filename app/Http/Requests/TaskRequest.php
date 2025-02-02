@@ -22,10 +22,10 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status_id'   => 'required|exists:task_statuses,id',
-            'user_id'     => 'required|exists:users,id',
+            'name'          => 'nullable|string|max:255',
+            'description'   => 'nullable|string',
+            'status_id'     => 'nullable|exists:task_statuses,id',
+            'user_id'       => 'nullable|exists:users,id',
         ];
     }
 
@@ -36,9 +36,7 @@ class TaskRequest extends FormRequest
             'name.string'        => 'El nombre debe ser una cadena de texto.',
             'name.max'           => 'El nombre no puede tener más de 255 caracteres.',
             'description.string' => 'La descripción debe ser una cadena de texto.',
-            'status_id.required' => 'El estado de la tarea es obligatorio.',
             'status_id.exists'   => 'El estado de la tarea no es válido.',
-            'user_id.required'   => 'El usuario asignado es obligatorio.',
             'user_id.exists'     => 'El usuario asignado no es válido.',
         ];
     }

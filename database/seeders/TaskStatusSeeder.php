@@ -12,13 +12,15 @@ class TaskStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        $statuses = ['Pendiente', 'En Proceso', 'Finalizado'];
+        $statuses = ['pending', 'in_process', 'finalized'];
+        $description = ['Pendiente', 'En Proceso', 'Finalizado'];
 
-        foreach ($statuses as $status) {
+        foreach ($statuses as $position => $status) {
             DB::table('task_statuses')->insert([
-                'name' => $status,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'name'          => $status,
+                'description'   => $description[$position],
+                'created_at'    => now(),
+                'updated_at'    => now(),
             ]);
         }
     }
