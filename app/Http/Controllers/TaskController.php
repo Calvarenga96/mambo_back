@@ -43,6 +43,7 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         try {
+            $task = Task::where("id", $task->id)->get();
             return response()->json($task, 200)->makeHidden(["created_at", "updated_at"]);
         } catch (Exception $e) {
             return response()->json(['error' => 'Error al obtener la tarea.'], 500);

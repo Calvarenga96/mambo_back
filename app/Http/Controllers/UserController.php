@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -27,9 +28,14 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        try {
+            $user = User::where("id", $user->id);
+            return response()->json($user, 200)->makeHidden(["created_at", "updated_at"]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Error al obtener la tarea.'], 500);
+        }
     }
 
     /**
