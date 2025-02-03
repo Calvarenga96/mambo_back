@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskRequest;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class TaskController extends Controller
@@ -14,7 +15,9 @@ class TaskController extends Controller
     public function index()
     {
         try {
-            $tasks = Task::all()->makeHidden(["created_at", "updated_at"]);
+            if (!Auth::check()) return response()->json(['error' => 'Usuario no autenticado.'], 401);
+            $user = Auth::user();
+            $tasks = Task::where("user_id", $user->id)->get()->makeHidden(["created_at", "updated_at"]);
             return response()->json($tasks, 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Error al obtener las tareas.'], 500);

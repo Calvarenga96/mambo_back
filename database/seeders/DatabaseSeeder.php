@@ -16,13 +16,15 @@ class DatabaseSeeder extends Seeder
         User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Christian Alvarenga',
-            'email' => 'chris@prueba.com',
+            'name'      => 'Christian Alvarenga',
+            'email'     => 'chris@prueba.com',
+            'password'  => bcrypt('12345678'),
         ]);
 
         User::factory()->create([
-            'name' => 'Jorge Vallejos',
-            'email' => 'jorge@prueba.com',
+            'name'      => 'Jorge Vallejos',
+            'email'     => 'jorge@prueba.com',
+            'password'  => bcrypt('12345678'),
         ]);
 
         $this->call(TaskStatusSeeder::class);
